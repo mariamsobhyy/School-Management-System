@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace School_Management_System.Models
 {
@@ -23,7 +24,8 @@ namespace School_Management_System.Models
 
         public int ClassRoomId { get; set; }
 
-        public ClassRoom ClassRoom { get; set; }
+        [JsonIgnore]
+        public ClassRoom? ClassRoom { get; set; }
 
 
         public ICollection<Enrollment> enrollments { get; set; }

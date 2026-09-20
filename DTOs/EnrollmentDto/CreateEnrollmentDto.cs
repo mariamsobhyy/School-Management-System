@@ -1,24 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace School_Management_System.Models
+namespace School_Management_System.DTOs.EnrollmentDto
 {
-    public class Enrollment
+    public class CreateEnrollmentDto
     {
-        public int Id { get; set; }
-    
         public int StudentId { get; set; }
-        public Student? Student { get; set; }
 
-
+        [Required]
         public int SubjectId { get; set; }
-        public Subject? Subject { get; set; }
 
-
+        [Required]
         public DateTime EnrollmentDate { get; set; }
 
- 
+        [Range(0, 100)]
         public decimal Grade { get; set; }
-
-
     }
 }

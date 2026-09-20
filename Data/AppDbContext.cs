@@ -165,13 +165,136 @@ namespace School_Management_System.Data
 
 
 
+    
+          
+            modelBuilder.Entity<Department>().HasData(
+                new Department
+                {
+                    Id = 1,
+                    Name = "Computer Science",
+                    Description = "Computer Science Department"
+                },
+                new Department
+                {
+                    Id = 2,
+                    Name = "Mathematics",
+                    Description = "Mathematics Department"
+                }
+            );
 
+          
+            modelBuilder.Entity<Teacher>().HasData(
+                new Teacher
+                {
+                    Id = 1,
+                    FristName= "Ahmed",
+                    LastName = "Mohamed",
+                    Email = "ahmed@school.com",
+                    PhoneNumber = "01012345678",
+                    Salary = 15000,
+                    DepartmentId = 1
+                },
+                new Teacher
+                {
+                    Id = 2,
+                    FristName = "Sara",
+                    LastName = "Ali",
+                    Email = "sara@school.com",
+                    PhoneNumber = "01112345678",
+                    Salary = 14000,
+                    DepartmentId = 2
+                }
+            );
 
+           
+            modelBuilder.Entity<Subject>().HasData(
+                new Subject
+                {
+                    Id = 1,
+                    Name = "Programming",
+                    Description = "Programming Fundamentals",
+                    MaxGrade = 100,
+                    TeacherId = 1
+                },
+                new Subject
+                {
+                    Id = 2,
+                    Name = "Mathematics",
+                    Description = "Basic Mathematics",
+                    MaxGrade = 100,
+                    TeacherId = 2
+                }
+            );
+
+           
+            modelBuilder.Entity<ClassRoom>().HasData(
+                new ClassRoom
+                {
+                    Id = 1,
+                    Name = "Class A",
+                    GradeLevel = 10,
+                    Capacity = 30
+                },
+                new ClassRoom
+                {
+                    Id = 2,
+                    Name = "Class B",
+                    GradeLevel = 11,
+                    Capacity = 25
+                }
+            );
+
+            
+            modelBuilder.Entity<Student>().HasData(
+                new Student
+                {
+                    Id = 1,
+                    FristName = "Mariam",
+                    LastName = "Mohamed",
+                    Email = "mariam@student.com",
+                    PhoneNumber = "01212345678",
+                    DateOfBirth = new DateOnly(2009, 5, 15),
+                    ClassRoomId = 1
+                },
+                new Student
+                {
+                    Id = 2,
+                    FristName = "Omar",
+                    LastName = "Ahmed",
+                    Email = "omar@student.com",
+                    PhoneNumber = "01098765432",
+                    DateOfBirth = new DateOnly(2008, 8, 20),
+                    ClassRoomId = 2
+                }
+            );
+
+           
+            modelBuilder.Entity<Enrollment>().HasData(
+                new Enrollment
+                {
+                    Id = 1,
+                    StudentId = 1,
+                    SubjectId = 1,
+                    EnrollmentDate = new DateTime(2026, 9, 1),
+                    Grade = 95
+                },
+                new Enrollment
+                {
+                    Id = 2,
+                    StudentId = 2,
+                    SubjectId = 2,
+                    EnrollmentDate = new DateTime(2026, 9, 1),
+                    Grade = 88
+                }
+            );
         }
+
+
+    }
         
 
 
 
 
-    }
+    
 }

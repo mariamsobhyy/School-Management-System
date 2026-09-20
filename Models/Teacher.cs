@@ -21,7 +21,7 @@ namespace School_Management_System.Models
 
         public int DepartmentId { get; set; }
 
-        public Department Department { get; set; }
+        public Department? Department { get; set; }
 
         public ICollection<Subject> Subjects { get; set; }
     }
