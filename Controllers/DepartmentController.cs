@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using School_Management_System.Data;
 using School_Management_System.DTOs.DepartmentDto;
 using School_Management_System.Models;
@@ -11,40 +9,60 @@ namespace School_Management_System.Controllers
     [ApiController]
     public class DepartmentController : ControllerBase
     {
-
         private readonly AppDbContext _context;
-         
-        public DepartmentController ( AppDbContext context)
+
+        public DepartmentController(AppDbContext context)
         {
             _context = context;
         }
 
-
+       
         [HttpGet]
         public IActionResult GetDepartments()
         {
-            var departments = _context.Departments.ToList();
-            return Ok(departments);
+            List<Department> departments = _context.Departments.ToList();
+
+            List<DepartmentDto> result = new List<DepartmentDto>();
+
+            foreach (Department department in departments)
+            {
+                result.Add(new DepartmentDto
+                {
+                    Id = department.Id,
+                    Name = department.Name,
+                    Description = department.Description
+                });
+            }
+
+            return Ok(result);
         }
 
+        
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var department = _context.Departments
-                .FirstOrDefault(d => d.Id == id);
+            Department department = _context.Departments.Find(id);
 
             if (department == null)
             {
-                return NotFound("Department not found");
+                return NotFound();
             }
 
-            return Ok(department);
+            DepartmentDto result = new DepartmentDto
+            {
+                Id = department.Id,
+                Name = department.Name,
+                Description = department.Description
+            };
+
+            return Ok(result);
         }
 
+       
         [HttpPost]
         public IActionResult CreateDepartment(CreateDepartmentDto dto)
         {
-            var department = new Department
+            Department department = new Department
             {
                 Name = dto.Name,
                 Description = dto.Description
@@ -53,22 +71,31 @@ namespace School_Management_System.Controllers
             _context.Departments.Add(department);
             _context.SaveChanges();
 
+            DepartmentDto result = new DepartmentDto
+            {
+                Id = department.Id,
+                Name = department.Name,
+                Description = department.Description
+            };
+
             return CreatedAtAction(
                 nameof(GetById),
                 new { id = department.Id },
-                department
+                result
             );
         }
 
+       
         [HttpPut("{id}")]
-        public IActionResult UpdateDepartment(int id, UpdateDepartmentDto dto)
+        public IActionResult UpdateDepartment(
+            int id,
+            UpdateDepartmentDto dto)
         {
-            var department = _context.Departments
-                .FirstOrDefault(d => d.Id == id);
+            Department department = _context.Departments.Find(id);
 
             if (department == null)
             {
-                return NotFound("Department not found");
+                return NotFound();
             }
 
             department.Name = dto.Name;
@@ -79,15 +106,15 @@ namespace School_Management_System.Controllers
             return NoContent();
         }
 
+        
         [HttpDelete("{id}")]
-        public IActionResult RemoveDepartment(int id)
+        public IActionResult DeleteDepartment(int id)
         {
-            var department = _context.Departments
-                .FirstOrDefault(d => d.Id == id);
+            Department department = _context.Departments.Find(id);
 
             if (department == null)
             {
-                return NotFound("Department not found");
+                return NotFound();
             }
 
             _context.Departments.Remove(department);

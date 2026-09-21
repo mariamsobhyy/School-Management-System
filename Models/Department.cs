@@ -13,6 +13,6 @@ namespace School_Management_System.Models
         public string Description { get; set; }
 
 
-        public ICollection<Teacher> teachers { get; set; }
+        public ICollection<Teacher> teachers { get; set; } = new List<Teacher>();
     }
 }

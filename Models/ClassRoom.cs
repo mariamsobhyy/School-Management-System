@@ -14,7 +14,7 @@ namespace School_Management_System.Models
   
         public int Capacity { get; set; }
 
-        public ICollection<Student> Students { get; set; }
+        public ICollection<Student> Students { get; set; } = new List<Student>();
 
     }
 }

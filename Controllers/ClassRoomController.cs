@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using School_Management_System.Data;
 using School_Management_System.DTOs.ClassRoomDto;
+using School_Management_System.DTOs.StudentDto;
 using School_Management_System.Models;
 
 namespace School_Management_System.Controllers
@@ -18,31 +18,55 @@ namespace School_Management_System.Controllers
             _context = context;
         }
 
+        
         [HttpGet]
         public IActionResult GetClassRooms()
         {
-            var classrooms = _context.Classrooms.Include(c => c.Students).ToList();
-            return Ok(classrooms);
+            List<ClassRoom> classrooms = _context.Classrooms.ToList();
+
+            List<ClassroomDto> result = new List<ClassroomDto>();
+
+            foreach (ClassRoom classroom in classrooms)
+            {
+                result.Add(new ClassroomDto
+                {
+                    Id = classroom.Id,
+                    Name = classroom.Name,
+                    GradeLevel = classroom.GradeLevel,
+                    Capacity = classroom.Capacity
+                });
+            }
+
+            return Ok(result);
         }
+
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var classroom = _context.Classrooms.Include( c => c.Students)
-                .FirstOrDefault(c => c.Id == id);
+            ClassRoom classroom = _context.Classrooms.Find(id);
 
             if (classroom == null)
             {
-                return NotFound("ClassRoom not found");
+                return NotFound();
             }
 
-            return Ok(classroom);
+            ClassroomDto result = new ClassroomDto
+            {
+                Id = classroom.Id,
+                Name = classroom.Name,
+                GradeLevel = classroom.GradeLevel,
+                Capacity = classroom.Capacity
+            };
+
+            return Ok(result);
         }
 
+       
         [HttpPost]
         public IActionResult CreateClassRoom(CreateClassroomDto dto)
         {
-            var classroom = new ClassRoom
+            ClassRoom classroom = new ClassRoom
             {
                 Name = dto.Name,
                 GradeLevel = dto.GradeLevel,
@@ -52,24 +76,30 @@ namespace School_Management_System.Controllers
             _context.Classrooms.Add(classroom);
             _context.SaveChanges();
 
+            ClassroomDto result = new ClassroomDto
+            {
+                Id = classroom.Id,
+                Name = classroom.Name,
+                GradeLevel = classroom.GradeLevel,
+                Capacity = classroom.Capacity
+            };
+
             return CreatedAtAction(
                 nameof(GetById),
                 new { id = classroom.Id },
-                classroom
+                result
             );
         }
 
+        
         [HttpPut("{id}")]
-        public IActionResult UpdateClassRoom(
-            int id,
-            UpdateClassroomDto dto)
+        public IActionResult UpdateClassRoom(int id, UpdateClassroomDto dto)
         {
-            var classroom = _context.Classrooms
-                .FirstOrDefault(c => c.Id == id);
+            ClassRoom classroom = _context.Classrooms.Find(id);
 
             if (classroom == null)
             {
-                return NotFound("ClassRoom not found");
+                return NotFound();
             }
 
             classroom.Name = dto.Name;
@@ -81,15 +111,15 @@ namespace School_Management_System.Controllers
             return NoContent();
         }
 
+
         [HttpDelete("{id}")]
-        public IActionResult RemoveClassRoom(int id)
+        public IActionResult DeleteClassRoom(int id)
         {
-            var classroom = _context.Classrooms
-                .FirstOrDefault(c => c.Id == id);
+            ClassRoom classroom = _context.Classrooms.Find(id);
 
             if (classroom == null)
             {
-                return NotFound("ClassRoom not found");
+                return NotFound();
             }
 
             _context.Classrooms.Remove(classroom);
@@ -99,4 +129,3 @@ namespace School_Management_System.Controllers
         }
     }
 }
-

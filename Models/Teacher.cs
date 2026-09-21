@@ -23,6 +23,6 @@ namespace School_Management_System.Models
 
         public Department? Department { get; set; }
 
-        public ICollection<Subject> Subjects { get; set; }
+        public ICollection<Subject> Subjects { get; set; } = new List<Subject>();
     }
 }

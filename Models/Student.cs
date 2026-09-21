@@ -28,6 +28,6 @@ namespace School_Management_System.Models
         public ClassRoom? ClassRoom { get; set; }
 
 
-        public ICollection<Enrollment> enrollments { get; set; }
+        public ICollection<Enrollment> enrollments { get; set; } = new List<Enrollment>();
     }
 }

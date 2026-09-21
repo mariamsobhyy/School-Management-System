@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using School_Management_System.Data;
 using School_Management_System.DTOs.SubjectDto;
 using School_Management_System.Models;
@@ -17,39 +16,62 @@ namespace School_Management_System.Controllers
             _context = context;
         }
 
+
         [HttpGet]
         public IActionResult GetSubjects()
         {
-            var subjects = _context.Subjects.ToList();
-            return Ok(subjects);
+            List<Subject> subjects = _context.Subjects.ToList();
+
+            List<SubjectDto> result = new List<SubjectDto>();
+
+            foreach (Subject subject in subjects)
+            {
+                result.Add(new SubjectDto
+                {
+                    Id = subject.Id,
+                    Name = subject.Name,
+                    Description = subject.Description,
+                    MaxGrade = subject.MaxGrade,
+                    TeacherId = subject.TeacherId
+                });
+            }
+
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var subject = _context.Subjects
-                .FirstOrDefault(s => s.Id == id);
+            Subject subject = _context.Subjects.Find(id);
 
             if (subject == null)
             {
-                return NotFound("Subject not found");
+                return NotFound();
             }
 
-            return Ok(subject);
+            SubjectDto result = new SubjectDto
+            {
+                Id = subject.Id,
+                Name = subject.Name,
+                Description = subject.Description,
+                MaxGrade = subject.MaxGrade,
+                TeacherId = subject.TeacherId
+            };
+
+            return Ok(result);
         }
 
         [HttpPost]
         public IActionResult CreateSubject(CreateSubjectDto dto)
         {
-            var teacher = _context.Teachers
-                .FirstOrDefault(t => t.Id == dto.TeacherId);
+            Teacher teacher = _context.Teachers.Find(dto.TeacherId);
 
             if (teacher == null)
             {
-                return NotFound("Teacher not found");
+                return BadRequest("Teacher not found");
             }
 
-            var subject = new Subject
+            Subject subject = new Subject
             {
                 Name = dto.Name,
                 Description = dto.Description,
@@ -60,32 +82,38 @@ namespace School_Management_System.Controllers
             _context.Subjects.Add(subject);
             _context.SaveChanges();
 
+            SubjectDto result = new SubjectDto
+            {
+                Id = subject.Id,
+                Name = subject.Name,
+                Description = subject.Description,
+                MaxGrade = subject.MaxGrade,
+                TeacherId = subject.TeacherId
+            };
+
             return CreatedAtAction(
                 nameof(GetById),
                 new { id = subject.Id },
-                subject
+                result
             );
         }
 
+
         [HttpPut("{id}")]
-        public IActionResult UpdateSubject(
-            int id,
-            UpdateSubjectDto dto)
+        public IActionResult UpdateSubject(int id, UpdateSubjectDto dto)
         {
-            var subject = _context.Subjects
-                .FirstOrDefault(s => s.Id == id);
+            Subject subject = _context.Subjects.Find(id);
 
             if (subject == null)
             {
-                return NotFound("Subject not found");
+                return NotFound();
             }
 
-            var teacher = _context.Teachers
-                .FirstOrDefault(t => t.Id == dto.TeacherId);
+            Teacher teacher = _context.Teachers.Find(dto.TeacherId);
 
             if (teacher == null)
             {
-                return NotFound("Teacher not found");
+                return BadRequest("Teacher not found");
             }
 
             subject.Name = dto.Name;
@@ -99,14 +127,13 @@ namespace School_Management_System.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult RemoveSubject(int id)
+        public IActionResult DeleteSubject(int id)
         {
-            var subject = _context.Subjects
-                .FirstOrDefault(s => s.Id == id);
+            Subject subject = _context.Subjects.Find(id);
 
             if (subject == null)
             {
-                return NotFound("Subject not found");
+                return NotFound();
             }
 
             _context.Subjects.Remove(subject);
@@ -115,5 +142,4 @@ namespace School_Management_System.Controllers
             return NoContent();
         }
     }
-
 }

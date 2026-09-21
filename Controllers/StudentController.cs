@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using School_Management_System.Data;
 using School_Management_System.DTOs.StudentDto;
 using School_Management_System.Models;
@@ -17,39 +16,69 @@ namespace School_Management_System.Controllers
             _context = context;
         }
 
+
+
         [HttpGet]
         public IActionResult GetStudents()
         {
-            var students = _context.Students.ToList();
-            return Ok(students);
+            List<Student> students = _context.Students.ToList();
+
+            List<StudentDto> result = new List<StudentDto>();
+
+            foreach (Student student in students)
+            {
+                result.Add(new StudentDto
+                {
+                    Id = student.Id,
+                    FirstName = student.FristName,
+                    LastName = student.LastName,
+                    Email = student.Email,
+                    PhoneNumber = student.PhoneNumber,
+                    DateOfBirth = student.DateOfBirth,
+                    ClassRoomId = student.ClassRoomId
+                });
+            }
+
+            return Ok(result);
         }
 
+        
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var student = _context.Students
-                .FirstOrDefault(s => s.Id == id);
+            Student student = _context.Students.Find(id);
 
             if (student == null)
             {
-                return NotFound("Student not found");
+                return NotFound();
             }
 
-            return Ok(student);
+            StudentDto result = new StudentDto
+            {
+                Id = student.Id,
+                FirstName = student.FristName,
+                LastName = student.LastName,
+                Email = student.Email,
+                PhoneNumber = student.PhoneNumber,
+                DateOfBirth = student.DateOfBirth,
+                ClassRoomId = student.ClassRoomId
+            };
+
+            return Ok(result);
         }
 
+       
         [HttpPost]
         public IActionResult CreateStudent(CreateStudentDto dto)
         {
-            var classroom = _context.Classrooms
-                .FirstOrDefault(c => c.Id == dto.ClassRoomId);
+            ClassRoom classroom = _context.Classrooms.Find(dto.ClassRoomId);
 
             if (classroom == null)
             {
-                return NotFound("ClassRoom not found");
+                return BadRequest("ClassRoom not found");
             }
 
-            var student = new Student
+            Student student = new Student
             {
                 FristName = dto.FirstName,
                 LastName = dto.LastName,
@@ -62,32 +91,40 @@ namespace School_Management_System.Controllers
             _context.Students.Add(student);
             _context.SaveChanges();
 
+            StudentDto result = new StudentDto
+            {
+                Id = student.Id,
+                FirstName = student.FristName,
+                LastName = student.LastName,
+                Email = student.Email,
+                PhoneNumber = student.PhoneNumber,
+                DateOfBirth = student.DateOfBirth,
+                ClassRoomId = student.ClassRoomId
+            };
+
             return CreatedAtAction(
                 nameof(GetById),
                 new { id = student.Id },
-                student
+                result
             );
         }
 
+        
         [HttpPut("{id}")]
-        public IActionResult UpdateStudent(
-            int id,
-            UpdateStudentDto dto)
+        public IActionResult UpdateStudent(int id, UpdateStudentDto dto)
         {
-            var student = _context.Students
-                .FirstOrDefault(s => s.Id == id);
+            Student student = _context.Students.Find(id);
 
             if (student == null)
             {
-                return NotFound("Student not found");
+                return NotFound();
             }
 
-            var classroom = _context.Classrooms
-                .FirstOrDefault(c => c.Id == dto.ClassRoomId);
+            ClassRoom classroom = _context.Classrooms.Find(dto.ClassRoomId);
 
             if (classroom == null)
             {
-                return NotFound("ClassRoom not found");
+                return BadRequest("ClassRoom not found");
             }
 
             student.FristName = dto.FirstName;
@@ -102,15 +139,15 @@ namespace School_Management_System.Controllers
             return NoContent();
         }
 
+        
         [HttpDelete("{id}")]
-        public IActionResult RemoveStudent(int id)
+        public IActionResult DeleteStudent(int id)
         {
-            var student = _context.Students
-                .FirstOrDefault(s => s.Id == id);
+            Student student = _context.Students.Find(id);
 
             if (student == null)
             {
-                return NotFound("Student not found");
+                return NotFound();
             }
 
             _context.Students.Remove(student);
@@ -119,6 +156,4 @@ namespace School_Management_System.Controllers
             return NoContent();
         }
     }
-
 }
-

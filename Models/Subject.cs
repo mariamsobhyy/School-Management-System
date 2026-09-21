@@ -19,6 +19,6 @@ namespace School_Management_System.Models
         public Teacher? Teacher { get; set; }
 
 
-        public ICollection<Enrollment> enrollments { get; set; }
+        public ICollection<Enrollment> enrollments { get; set; } = new List<Enrollment>();
     }
 }
