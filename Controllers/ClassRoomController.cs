@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using School_Management_System.Data;
 using School_Management_System.DTOs.ClassRoomDto;
 using School_Management_System.DTOs.StudentDto;
+using School_Management_System.Mapper;
 using School_Management_System.Models;
 
 namespace School_Management_System.Controllers
@@ -13,31 +15,45 @@ namespace School_Management_System.Controllers
     {
         private readonly AppDbContext _context;
 
+        private readonly IMapper _mapper;
+
         public ClassRoomController(AppDbContext context)
         {
             _context = context;
+            var confg = new MapperConfiguration(cfg => cfg.AddProfile<ClassRoomProfile>());
+            _mapper = confg.CreateMapper();
         }
 
-        
+
         [HttpGet]
         public IActionResult GetClassRooms()
         {
             List<ClassRoom> classrooms = _context.Classrooms.ToList();
 
-            List<ClassroomDto> result = new List<ClassroomDto>();
+            //List<ClassroomDto> result = new List<ClassroomDto>();
 
-            foreach (ClassRoom classroom in classrooms)
+            //foreach (ClassRoom classroom in classrooms)
+            //{
+            //    result.Add(new ClassroomDto
+            //    {
+            //        Id = classroom.Id,
+            //        Name = classroom.Name,
+            //        GradeLevel = classroom.GradeLevel,
+            //        Capacity = classroom.Capacity
+            //    });
+            //}
+
+            List<ClassroomDto> classroomDtos = _mapper.Map<List<ClassroomDto>>(classrooms);
+
+            if (classrooms == null || classrooms.Count == 0)
             {
-                result.Add(new ClassroomDto
-                {
-                    Id = classroom.Id,
-                    Name = classroom.Name,
-                    GradeLevel = classroom.GradeLevel,
-                    Capacity = classroom.Capacity
-                });
+                return NotFound("classrooms not found");
             }
 
-            return Ok(result);
+
+
+
+            return Ok(classroomDtos);
         }
 
 
