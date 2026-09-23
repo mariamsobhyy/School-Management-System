@@ -61,6 +61,10 @@ namespace School_Management_System.Controllers
             return Ok(result);
         }
 
+        [HttpGet("Order By Grade")]
+       
+        public IActionResult 
+
         [HttpPost]
         public IActionResult CreateEnrollment(CreateEnrollmentDto dto)
         {

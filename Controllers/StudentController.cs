@@ -67,6 +67,15 @@ namespace School_Management_System.Controllers
             return Ok(result);
         }
 
+
+        [HttpGet ("Order By name")]
+
+        public IActionResult GetByName()
+        {
+            var student = _context.Students.OrderBy(x => x.LastName).ToList();
+
+            return Ok(student);
+        }
        
         [HttpPost]
         public IActionResult CreateStudent(CreateStudentDto dto)
